@@ -8,8 +8,8 @@ android {
         applicationId "pansong291.findview4aide"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 20190913
-        versionName "1.0"
+        versionCode 20190916
+        versionName "1.0.1"
     }
     buildTypes {
         release {
