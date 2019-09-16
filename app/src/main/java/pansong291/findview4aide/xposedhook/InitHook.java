@@ -244,9 +244,6 @@ public class InitHook implements IXposedHookLoadPackage
      }
      if(attr.toString().equals("android:id"))
      {
-      int divisionSignIndex = value.indexOf("/");
-      if(divisionSignIndex >= 0)
-       value.delete(0, divisionSignIndex + 1);
       map.put(value.toString(), tag.toString());
      }
      log(TAG, "=\"" + value.toString() + "\"");
@@ -282,6 +279,7 @@ public class InitHook implements IXposedHookLoadPackage
   sb2.append("private void initView(");
   if(cb_root_view.isChecked()) sb2.append("View view");
   sb2.append(")\n{\n");
+  boolean isAndroidId;
   String clazz;
   String varName;
   for(String id: keySet)
@@ -289,6 +287,12 @@ public class InitHook implements IXposedHookLoadPackage
    // class
    clazz = map.get(id);
    log(TAG, "class: " + clazz + ", id: " + id);
+
+   // id
+   isAndroidId = id.startsWith("@android:id/");
+   int divisionSignIndex = id.indexOf("/");
+   if(divisionSignIndex >= 0)
+    id = id.substring(divisionSignIndex + 1);
 
    // variable name need add a prefix m ?
    if(cb_add_m.isChecked())
@@ -316,7 +320,9 @@ public class InitHook implements IXposedHookLoadPackage
 
    // need add root view ?
    if(cb_root_view.isChecked())sb2.append("view.");
-   sb2.append("findViewById(R.id." + id + ");\n");
+   sb2.append("findViewById(");
+   if(isAndroidId) sb2.append("android.");
+   sb2.append("R.id." + id + ");\n");
   }
   sb1.append("\n");
   sb2.append("}");
